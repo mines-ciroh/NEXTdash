@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title>TempEst-NEXT Forecast Dashboard</title>
+    <link rel="icon" href="https://rivertempest.org/_static/TempEstICOSquare.png"/>
+    <!-- We use Leaflet. -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <style>
+    #map {
+      height: 600px;
+    }
+    </style>
+    <script>
+      var colors = ['#fff7ec','#fee8c8','#fdd49e','#fdbb84','#fc8d59','#ef6548','#d7301f','#b30000','#7f0000']; // via https://colorbrewer2.org/#type=sequential&scheme=OrRd&n=9
+    </script>
+  </head>
+  <body>
+    <header><h1>TempEst-NEXT National Water Temperature Forecasts</h1>
+    <img alt="TempEst-NEXT Logo" src="https://rivertempest.org/_images/TempEstNext.png" width="300">
+    </header>
+    <main>
+    <div id="map"></div>
+    <script>
+    // see https://leafletjs.com/examples/choropleth/
+    var map = L.map('map').setView([40, -100], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+        referrerPolicy: 'strict-origin-when-cross-origin'
+    }).addTo(map);
+    </script>
+    </main>
+    <footer>Copyright (c) 2026 Daniel Philippus. Funded by the NOAA Cooperative Institute for Research to Operations in Hydrology. These data and related items of information have not been formally disseminated by NOAA, and do not represent any agency determination, view, or policy.</footer>
+  </body>
+</html>
