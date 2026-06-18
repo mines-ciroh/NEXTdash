@@ -28,12 +28,36 @@
     <div id="map"></div>
     <script>
     // see https://leafletjs.com/examples/choropleth/
-    var map = L.map('map').setView([40, -100], 13);
+    var dataurl = "https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/data/contents/full_forecasts/20260618_rawmap.json";
+    var map = L.map('map').setView([40, -100], 4);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
         referrerPolicy: 'strict-origin-when-cross-origin'
     }).addTo(map);
+    // Courtesy of StackExchange: https://stackoverflow.com/questions/66355293/leaflet-how-to-fetch-geojson-from-url-and-pass-it-to-l-geojson
+    function getColor(temp) {
+      var min = 0
+      var max = 35
+      var pos = colors.length * (temp - min) / (max - min);
+      if (temp < max) {
+        return colors[Math.floor(pos)];
+      } else {
+        return "#ff0000"; // bright red
+      }
+    }
+    function style(feature) {
+        return {
+            fillColor: getColor(feature.properties.mean),
+            radius: 5,
+            stroke: false,
+            fillOpacity: 1
+        };
+    }
+    var dataresponse = fetch(dataurl).then(response => response.json()).then(response => {
+      L.geoJson(response, {pointToLayer: (gjp, latlon) => L.circleMarker(latlon),
+      style: style}).addTo(map);
+    });
     </script>
     </main>
     <footer>Copyright (c) 2026 Daniel Philippus. Funded by the NOAA Cooperative Institute for Research to Operations in Hydrology. These data and related items of information have not been formally disseminated by NOAA, and do not represent any agency determination, view, or policy.</footer>
