@@ -38,21 +38,26 @@
         margin-right: 8px;
         opacity: 0.7;
     }
+    footer {
+        text-align: center;
+    }
     </style>
     <script>
       var colors = ['#0d0887', '#4c02a1', '#7e03a8', '#aa2395', '#cc4778', '#e66c5c', '#f89540', '#fdc527', '#f0f921']; // via https://waldyrious.net/viridis-palette-generator/
+      // Get a list of forecast maps and find the newest one
+      var hslist = "https://www.hydroshare.org/hsapi/resource/b8852529788a437a8d697e9b0435b99a/file_list/";
     </script>
   </head>
   <body>
-    <header><h1>TempEst-NEXT National Water Temperature Forecasts</h1>
-    <img alt="TempEst-NEXT Logo" src="https://rivertempest.org/_images/TempEstNext.png" width="300">
+    <header><h1 id="head">TempEst-NEXT National Water Temperature Forecast</h1>
+    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs.</p>
     </header>
     <main>
     <div id="map"></div>
     <script>
     // see https://leafletjs.com/examples/choropleth/ - a LOT of this is just copied from there
     var geojson;
-    var dataurl = "https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/data/contents/full_forecasts/20260618_rawmap.json";
+    // var dataurl = "https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/data/contents/full_forecasts/20260618_rawmap.json";
     var map = L.map('map').setView([40, -100], 4);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -89,7 +94,9 @@
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
         this._div.innerHTML = '<h4>Stream Water Temperature Forecast</h4>' +  (props ?
-            'Weekly average: ' + Math.round(props.mean, 2) + ' degC (' + Math.round(props.mean * 1.8 + 32, 2) + ' degF)'
+            'Weekly average: ' + Math.round(props.mean, 2) + ' degC (' + Math.round(props.mean * 1.8 + 32, 2) + ' degF)<br />' +
+            'Minimum daily average: ' + Math.round(props.min, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />' +
+            'Maximum daily average: ' + Math.round(props.max, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />'
             : 'Hover over a forecast point');
     };
 
@@ -126,23 +133,40 @@
         });
       return geojson;
     }
-    var dataresponse = fetch(dataurl).then(response => response.json()).then(response => {
-      buildJson(response).addTo(map);
-    });
+    function prepMap(fcurl, datestr) {
+        document.getElementById("head").innerHTML += " for the week beginning " + datestr;
+        var dataresponse = fetch(fcurl).then(response => response.json()).then(response => {
+          buildJson(response).addTo(map);
+        });
+    }
+    function procList(fileList) {
+        var fcfiles = fileList.results.filter(x => x.file_name.endsWith('rawmap.json')).map(x => x.url);
+        // Filenames use a timestamp that is sortable, so we can just sort them.
+        var fcurl = fcfiles.sort()[fcfiles.length - 1];  // last entry
+        var reg = /([0-9]+)_rawmap/;
+        var datenum = fcurl.match(reg)[1];
+        var date = new Date(datenum.slice(0, 4), datenum.slice(4, 6), datenum.slice(6));
+        var datestr = date.toDateString();
+        // For some reason, the URL list is HTTP.
+        var fcurl = "https://" + fcurl.split("://")[1];
+        prepMap(fcurl, datestr);
+      }
+    fetch(hslist).then(r => r.json().then(procList));
     var legend = L.control({position: 'bottomright'});
 
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
             grades = [0, 5, 10, 15, 20, 25, 30, 35, 40],
+            gradesf = [32, 41, 50, 59, 68, 77, 86, 95, 104],
             labels = [];
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        div.innerHTML += "<h4>Forecast Average Water Temperature (degC)</h4>"
+        div.innerHTML += "<h4>Forecast Average<br />Water Temperature</h4>"
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
                 '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] : '+  ') + ' degC (' + gradesf[i] + (gradesf[i + 1] ? '&ndash;' + gradesf[i + 1] : '+  ') + ' degF)' + '<br>';
         }
 
         return div;
@@ -151,6 +175,6 @@
     legend.addTo(map);
     </script>
     </main>
-    <footer>Copyright (c) 2026 Daniel Philippus. Funded by the NOAA Cooperative Institute for Research to Operations in Hydrology. These data and related items of information have not been formally disseminated by NOAA, and do not represent any agency determination, view, or policy.</footer>
+    <footer>Copyright (c) 2026 Daniel Philippus. Funded by the NOAA Cooperative Institute for Research to Operations in Hydrology. These data and related items of information have not been formally disseminated by NOAA, and do not represent any agency determination, view, or policy. This interactive map was created using Leaflet, OpenStreetMap, and CUAHSI HydroShare.<br /><img alt="TempEst-NEXT Logo" src="https://rivertempest.org/_images/TempEstNext.png" width="300"></footer>
   </body>
 </html>
