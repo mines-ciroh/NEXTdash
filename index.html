@@ -13,7 +13,8 @@
      crossorigin=""></script>
     <style>
     #map {
-      height: 600px;
+      height: 500px;
+      width: 60%;
     }
     .info {
         padding: 6px 8px;
@@ -38,8 +39,25 @@
         margin-right: 8px;
         opacity: 0.7;
     }
+    #mainrow {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+    @media (max-width: 1000px) {
+      /* mobile devices */
+      #mainrow {
+        flex-direction: column;
+      }
+    }
+    #summary {
+      width: 40%;
+    }
     footer {
         text-align: center;
+    }
+    td {
+      text-align: center;
     }
     </style>
     <script>
@@ -50,11 +68,45 @@
   </head>
   <body>
     <header><h1 id="head">TempEst-NEXT National Water Temperature Forecast</h1>
-    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs.</p>
+    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs. Note also that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
+    <p>The below map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information.</p>
     </header>
     <main>
+    <div id="mainrow">
     <div id="map"></div>
+    <div id="summary"><h2>Forecast Summary</h2>
+    <p>Stream Water Temperature = SWT. All metrics refer to daily or weekly average SWT at a site, so, for example, "national average maximum" is the national average of the maximum daily average SWT this week at each site.</p>
+    <!--
+    <table>
+      <tr id="sheader">
+        <th>National Average SWT (degC | degF)</th>
+        <th>National Average Maximum SWT (degC | degF)</th>
+        <th>National Average Minimum SWT (degC | degF)</th>
+        <th>Minimum Site Daily Average SWT (degC | degF)</th>
+        <th>Maximum Site Daily Average SWT (degC | degF)</th>
+      </tr>
+      <tr id="svalues">
+        <td id="natav">Loading</td>
+        <td id="natmax">Loading</td>
+        <td id="natmin">Loading</td>
+        <td id="sitemax">Loading</td>
+        <td id="sitemin">Loading</td>
+      </tr>
+    </table>
+    -->
+    <table>
+      <tr><th>National Average SWT (degC | degF):</th> <td id="natav">Loading</td></tr>
+      <tr><th>National Average Maximum SWT (degC | degF):</th> <td id="natmax">Loading</td></tr>
+      <tr><th>National Average Minimum SWT (degC | degF):</th> <td id="natmin">Loading</td></tr>
+      <tr><th>Maximum Site Daily Average SWT (degC | degF):</th> <td id="sitemax">Loading</td></tr>
+      <tr><th>Minimum Site Daily Average SWT (degC | degF):</th> <td id="sitemin">Loading</td></tr>
+    </table>
+    </div>
+    </div>
     <script>
+    function cToF(c) {
+      return Math.round(c * 1.8 + 32, 2)
+    }
     // see https://leafletjs.com/examples/choropleth/ - a LOT of this is just copied from there
     var geojson;
     // var dataurl = "https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/data/contents/full_forecasts/20260618_rawmap.json";
@@ -80,7 +132,8 @@
             fillColor: getColor(feature.properties.mean),
             radius: 5,
             stroke: false,
-            fillOpacity: 1
+            fillOpacity: 1,
+            alt: 'HUC-12 Watershed: ' + feature.properties.id
         };
     }
     var info = L.control();
@@ -92,12 +145,15 @@
     };
 
     // method that we will use to update the control based on feature properties passed
-    info.update = function (props) {
-        this._div.innerHTML = '<h4>Stream Water Temperature Forecast</h4>' +  (props ?
+    function mkDesc(props) {
+      return 'HUC-12 Watershed ID: ' + props.id + '<br />' +
             'Weekly average: ' + Math.round(props.mean, 2) + ' degC (' + Math.round(props.mean * 1.8 + 32, 2) + ' degF)<br />' +
             'Minimum daily average: ' + Math.round(props.min, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />' +
-            'Maximum daily average: ' + Math.round(props.max, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />'
-            : 'Hover over a forecast point');
+            'Maximum daily average: ' + Math.round(props.max, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)';
+    }
+    info.update = function (props) {
+        this._div.innerHTML = '<h4>Stream Water Temperature Forecast</h4>' +  (props ?
+            mkDesc(props) : 'Hover over a forecast point');
     };
 
     info.addTo(map);
@@ -124,8 +180,43 @@
             mouseout: resetHighlight,
             click: onClickFn
         });
+        layer.bindPopup(mkDesc(feature.properties));
+    }
+    function prepTable(obj) {
+      // Prepare table:
+      // IDs: natav, natmax, natmin, sitemax, sitemin
+      var data = obj.features;
+      var avs = [];
+      var maxes = [];
+      var mins = [];
+      var sitemax = 0;
+      var sitemin = 99;
+      for (i=0; i<data.length; i++) {
+        var vals = data[i].properties;
+        avs.push(vals.mean);
+        maxes.push(vals.max);
+        mins.push(vals.min);
+        if (vals.min < sitemin) {
+          sitemin = Math.round(vals.min, 2);
+        }
+        if (vals.max > sitemax) {
+          sitemax = Math.round(vals.max, 2);
+        }
+      }
+      var natav = Math.round(Math.sumPrecise(avs) / avs.length, 2);
+      var natmax = Math.round(Math.sumPrecise(maxes) / maxes.length, 2);
+      var natmin = Math.round(Math.sumPrecise(mins) / mins.length, 2);
+      function updater(id, val) {
+        document.getElementById(id).innerHTML = val + " | " + cToF(val);
+      }
+      updater("natav", natav);
+      updater("natmax", natmax);
+      updater("natmin", natmin);
+      updater("sitemax", sitemax);
+      updater("sitemin", sitemin);
     }
     function buildJson(response) {
+      prepTable(response);
         geojson = L.geoJson(response, {
           pointToLayer: (gjp, latlon) => L.circleMarker(latlon),
           style: style,
