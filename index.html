@@ -67,7 +67,9 @@
     }
     </style>
     <script>
-      var colors = ['#0d0887', '#4c02a1', '#7e03a8', '#aa2395', '#cc4778', '#e66c5c', '#f89540', '#fdc527', '#f0f921']; // via https://waldyrious.net/viridis-palette-generator/
+      var colors = ['#0000aa', '#0d0887', '#4c02a1', '#7e03a8', '#aa2395', '#cc4778', '#e66c5c', '#f89540', '#fdc527', '#f0f921']; // via https://waldyrious.net/viridis-palette-generator/
+      var minval = 0;
+      var maxval = 40;
       // Get a list of forecast maps and find the newest one
       var hslist = "https://www.hydroshare.org/hsapi/resource/b8852529788a437a8d697e9b0435b99a/file_list/";
     </script>
@@ -124,8 +126,8 @@
     }).addTo(map);
     // Courtesy of StackExchange: https://stackoverflow.com/questions/66355293/leaflet-how-to-fetch-geojson-from-url-and-pass-it-to-l-geojson
     function getColor(temp) {
-      var min = 0
-      var max = 40
+      var min = minval;
+      var max = maxval;
       var pos = colors.length * (temp - min) / (max - min);
       if (temp < max) {
         return colors[Math.floor(pos)];
@@ -254,8 +256,8 @@
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            grades = [0, 5, 10, 15, 20, 25, 30, 35, 40],
-            gradesf = [32, 41, 50, 59, 68, 77, 86, 95, 104],
+            grades = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40], // must be length(color)+1 or it will misalign
+            gradesf = grades.map(cToF); // [32, 41, 50, 59, 68, 77, 86, 95, 104],
             labels = [];
 
         // loop through our density intervals and generate a label with a colored square for each interval
