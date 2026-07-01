@@ -13,7 +13,7 @@
      crossorigin=""></script>
     <style>
     #map {
-      height: 500px;
+      height: 450px;
       width: 60%;
     }
     .info {
@@ -65,6 +65,30 @@
     td {
       text-align: center;
     }
+    #toprow {
+      text-align: center;
+      width: 100%;
+      margin: auto;
+      padding: 2px;
+      display: flex;
+      vertical-align: middle;
+      background-color: #ccc;
+    }
+    a.header {
+        float: left;
+        text-align: center;
+        vertical-align: middle;
+        width: 33%;
+        color: #FFF;
+        background-color: #555;
+        margin: auto;
+        line-height: 2em;
+        text-decoration: none;
+    }
+
+    a.header:hover {
+        background-color: #111;
+    }
     </style>
     <script>
       var colors = ['#0000aa', '#0d0887', '#4c02a1', '#7e03a8', '#aa2395', '#cc4778', '#e66c5c', '#f89540', '#fdc527', '#f0f921']; // via https://waldyrious.net/viridis-palette-generator/
@@ -75,8 +99,16 @@
     </script>
   </head>
   <body>
+    <div id="toprow">
+    <a class="header" href="https://rivertempest.org/#contact">Contact Us</a>
+    <a class="header" href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">Forecast Data</a>
+    <a class="header" href="https://rivertempest.org/next/readme.html">TempEst-NEXT</a>
+    <a class="header" href="https://people.mines.edu/thogue/">Hogue Research Group</a>
+    <a class="header" href="https://ciroh.mines.edu/">CIROH@Mines</a>
+    <a class="header" href="https://ciroh.ua.edu/">CIROH</a>
+    </div>
     <header><h1 id="head">TempEst-NEXT National Water Temperature Forecast</h1>
-    <p>This forecast dashboard is developed and maintained by the <a href="https://people.mines.edu/thogue/">Hogue Research Group</a> at Colorado School of Mines (Daniel Philippus, Claudia R. Corona, and Terri S. Hogue) with funding from the <a href="https://ciroh.mines.edu/">NOAA Cooperative Institute for Research to Operations in Hydrology</a>.</p>
+    <p>This forecast dashboard is developed and maintained by the <a href="https://people.mines.edu/thogue/">Hogue Research Group</a> at Colorado School of Mines (Daniel Philippus, Claudia R. Corona, and Terri S. Hogue) with funding from the <a href="https://ciroh.mines.edu/">NOAA Cooperative Institute for Research to Operations in Hydrology</a>. If you use this dashboard in your research, please cite the <a href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">HydroShare Resource</a> and the <a href="https://doi.org/10.1016/j.jhydrol.2026.135620">TempEst-NEXT paper</a>.</p>
     <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs. Note also that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
     <p>The below map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information.</p>
     </header>
