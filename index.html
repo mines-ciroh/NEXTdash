@@ -13,8 +13,8 @@
      crossorigin=""></script>
     <style>
     #map {
-      height: 450px;
-      width: 60%;
+      height: 600px;
+      width: 95%;
     }
     .info {
         padding: 6px 8px;
@@ -39,17 +39,20 @@
         margin-right: 8px;
         opacity: 0.7;
     }
-    #mainrow {
+    #inforow {
       width: 100%;
       display: flex;
       flex-direction: row;
     }
     #summary {
-      width: 40%;
+      width: 45%;
+    }
+    #infoblock {
+      width: 45%;
     }
     @media (max-width: 1000px) {
       /* mobile devices */
-      #mainrow {
+      #inforow {
         flex-direction: column;
       }
       #map {
@@ -107,34 +110,13 @@
     <a class="header" href="https://ciroh.mines.edu/">CIROH@Mines</a>
     <a class="header" href="https://ciroh.ua.edu/">CIROH</a>
     </div>
-    <header><h1 id="head">TempEst-NEXT National Water Temperature Forecast</h1>
-    <p>This forecast dashboard is developed and maintained by the <a href="https://people.mines.edu/thogue/">Hogue Research Group</a> at Colorado School of Mines (Daniel Philippus, Claudia R. Corona, and Terri S. Hogue) with funding from the <a href="https://ciroh.mines.edu/">NOAA Cooperative Institute for Research to Operations in Hydrology</a>. If you use this dashboard in your research, please cite the <a href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">HydroShare Resource</a> and the <a href="https://doi.org/10.1016/j.jhydrol.2026.135620">TempEst-NEXT paper</a>.</p>
-    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs. Note also that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
-    <p>The below map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information.</p>
+    <header><h1 id="head" style="text-align: center;">TempEst-NEXT National Water Temperature Forecast</h1>
     </header>
     <main>
-    <div id="mainrow">
     <div id="map"></div>
+    <div id="inforow">
     <div id="summary"><h2>Forecast Summary</h2>
     <p>Stream Water Temperature = SWT. All metrics refer to daily or weekly average SWT at a site, so, for example, "national average maximum" is the national average of the maximum daily average SWT this week at each site.</p>
-    <!--
-    <table>
-      <tr id="sheader">
-        <th>National Average SWT (degC | degF)</th>
-        <th>National Average Maximum SWT (degC | degF)</th>
-        <th>National Average Minimum SWT (degC | degF)</th>
-        <th>Minimum Site Daily Average SWT (degC | degF)</th>
-        <th>Maximum Site Daily Average SWT (degC | degF)</th>
-      </tr>
-      <tr id="svalues">
-        <td id="natav">Loading</td>
-        <td id="natmax">Loading</td>
-        <td id="natmin">Loading</td>
-        <td id="sitemax">Loading</td>
-        <td id="sitemin">Loading</td>
-      </tr>
-    </table>
-    -->
     <table>
       <tr><th>National Average SWT (degC | degF):</th> <td id="natav">Loading</td></tr>
       <tr><th>National Average Maximum SWT (degC | degF):</th> <td id="natmax">Loading</td></tr>
@@ -142,6 +124,11 @@
       <tr><th>Maximum Site Daily Average SWT (degC | degF):</th> <td id="sitemax">Loading</td></tr>
       <tr><th>Minimum Site Daily Average SWT (degC | degF):</th> <td id="sitemin">Loading</td></tr>
     </table>
+    </div>
+    <div id="infoblock">
+    <p>This forecast dashboard is developed and maintained by the <a href="https://people.mines.edu/thogue/">Hogue Research Group</a> at Colorado School of Mines (Daniel Philippus, Claudia R. Corona, and Terri S. Hogue) with funding from the <a href="https://ciroh.mines.edu/">NOAA Cooperative Institute for Research to Operations in Hydrology</a>. If you use this dashboard in your research, please cite the <a href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">HydroShare Resource</a> and the <a href="https://doi.org/10.1016/j.jhydrol.2026.135620">TempEst-NEXT paper</a>.</p>
+    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs. Note also that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
+    <p>The below map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information.</p>
     </div>
     </div>
     <script>
@@ -151,7 +138,7 @@
     // see https://leafletjs.com/examples/choropleth/ - a LOT of this is just copied from there
     var geojson;
     // var dataurl = "https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/data/contents/full_forecasts/20260618_rawmap.json";
-    var map = L.map('map').setView([40, -100], 4);
+    var map = L.map('map').setView([40, -100], 5);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
