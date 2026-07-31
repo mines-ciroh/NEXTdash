@@ -271,17 +271,21 @@
           buildJson(response).addTo(map);
         });
     }
-    function procList(fileList) {
-        var fcfiles = fileList.results.filter(x => x.file_name.endsWith('rawmap.json')).map(x => x.url);
-        // Filenames use a timestamp that is sortable, so we can just sort them.
-        var fcurl = fcfiles.sort()[fcfiles.length - 1];  // last entry
-        var reg = /([0-9]+)_rawmap/;
-        var datenum = fcurl.match(reg)[1];
-        var date = new Date(datenum.slice(0, 4), Number(datenum.slice(4, 6))-1, datenum.slice(6));
-        var datestr = date.toDateString();
-        // For some reason, the URL list is HTTP.
-        var fcurl = "https://" + fcurl.split("://")[1];
-        prepMap(fcurl, datestr);
+    function procList(fileList, previous=[]) {
+        if (fileList.next) {  // there are more pages
+          fetch(fileList.next).then(r => r.json().then(x => procList(x, fileList.results.concat(previous))));
+        } else {
+          var fcfiles = fileList.results.concat(previous).filter(x => x.file_name.endsWith('rawmap.json')).map(x => x.url);
+          // Filenames use a timestamp that is sortable, so we can just sort them.
+          var fcurl = fcfiles.sort()[fcfiles.length - 1];  // last entry
+          var reg = /([0-9]+)_rawmap/;
+          var datenum = fcurl.match(reg)[1];
+          var date = new Date(datenum.slice(0, 4), Number(datenum.slice(4, 6))-1, datenum.slice(6));
+          var datestr = date.toDateString();
+          // For some reason, the URL list is HTTP.
+          var fcurl = "https://" + fcurl.split("://")[1];
+          prepMap(fcurl, datestr);
+        }
       }
     fetch(hslist).then(r => r.json().then(procList));
     var legend = L.control({position: 'bottomright'});
