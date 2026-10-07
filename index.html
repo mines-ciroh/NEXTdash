@@ -99,6 +99,7 @@
       var maxval = 40;
       // Get a list of forecast maps and find the newest one
       var hslist = "https://www.hydroshare.org/hsapi/resource/b8852529788a437a8d697e9b0435b99a/file_list/";
+      var pathbase = "https://www.hydroshare.org/hsapi/resource/b8852529788a437a8d697e9b0435b99a/files/full_forecasts/";
     </script>
   </head>
   <body>
@@ -262,15 +263,17 @@
         if (fileList.next) {  // there are more pages
           fetch(fileList.next).then(r => r.json().then(x => procList(x, fileList.results.concat(previous))));
         } else {
-          var fcfiles = fileList.results.concat(previous).filter(x => x.file_name.endsWith('rawmap.json')).map(x => x.url);
+          var fcfiles = fileList.results.concat(previous).filter(x => x.file_name.endsWith('rawmap.json')).map(x => x.file_name);
+          // pathbase
           // Filenames use a timestamp that is sortable, so we can just sort them.
-          var fcurl = fcfiles.sort()[fcfiles.length - 1];  // last entry
+          var fcurl = pathbase + fcfiles.sort()[fcfiles.length - 1];  // last entry
           var reg = /([0-9]+)_rawmap/;
           var datenum = fcurl.match(reg)[1];
           var date = new Date(datenum.slice(0, 4), Number(datenum.slice(4, 6))-1, datenum.slice(6));
           var datestr = date.toDateString();
           // For some reason, the URL list is HTTP.
-          var fcurl = "https://" + fcurl.split("://")[1];
+          // var fcurl = "https://" + fcurl.split("://")[1];
+          var fcurl = "/forecast.json";
           prepMap(fcurl, datestr);
         }
       }
