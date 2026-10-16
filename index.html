@@ -12,6 +12,7 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
     <script src="/today.js"></script>
+    <script src="/arrays.js">//sitearrays</script>
     <style>
     #map {
       height: 600px;
@@ -119,6 +120,7 @@
   </head>
   <body>
     <div id="toprow">
+    <a class="header" href="/">Home</a>
     <a class="header" href="https://rivertempest.org/#contact">Contact Us</a>
     <a class="header" href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">Forecast Data</a>
     <a class="header" href="https://rivertempest.org/next/readme.html">TempEst-NEXT</a>
@@ -127,6 +129,7 @@
     <a class="header" href="https://ciroh.ua.edu/">CIROH</a>
     </div>
     <header><h1 id="head" style="text-align: center;"><img alt="TempEst-NEXT Logo" src="https://rivertempest.org/_images/TempEstNext.png" class="title" />  TempEst-NEXT National Water Temperature Forecast</h1>
+    <p>A table of detailed daily site forecasts of stream/river water temperature is also available <a href='/table.html'>here</a>. This is statically-rendered and does not require JavaScript.</p>
     </header>
     <main>
     <div id="map"></div>
@@ -191,7 +194,6 @@
         this.update();
         return this._div;
     };
-
     // method that we will use to update the control based on feature properties passed
     function mkDesc(props) {
       return 'HUC-12 Watershed ID: ' + props.id + '<br />' +
