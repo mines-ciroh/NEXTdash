@@ -1,1 +1,1 @@
-var today = "Sun Oct 25 2026";
+var today = "Mon Oct 26 2026";
