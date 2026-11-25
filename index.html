@@ -129,7 +129,7 @@
     <a class="header" href="https://ciroh.ua.edu/">CIROH</a>
     </div>
     <header><h1 id="head" style="text-align: center;"><img alt="TempEst-NEXT Logo" src="https://rivertempest.org/_images/TempEstNext.png" class="title" />  TempEst-NEXT National Water Temperature Forecast</h1>
-    <p>A table of detailed daily site forecasts of stream/river water temperature is also available <a href='/table.html'>here</a>. This is statically-rendered and does not require JavaScript.</p>
+    <p>A table of detailed daily site forecasts of stream/river water temperature is also available <a href='/table.html'>here</a>. This is statically-rendered and does not require JavaScript. However, it may take quite some time for your browser to load and render ~70,000 rows.</p>
     </header>
     <main>
     <div id="map"></div>
@@ -147,8 +147,8 @@
     </div>
     <div id="infoblock">
     <p>This forecast dashboard is developed and maintained by the <a href="https://people.mines.edu/thogue/">Hogue Research Group</a> at Colorado School of Mines (Daniel Philippus, Claudia R. Corona, and Terri S. Hogue) with funding from the <a href="https://ciroh.mines.edu/">NOAA Cooperative Institute for Research to Operations in Hydrology</a>. If you use this dashboard in your research, please cite the <a href="https://www.hydroshare.org/resource/b8852529788a437a8d697e9b0435b99a/">HydroShare Resource</a> and the <a href="https://doi.org/10.1016/j.jhydrol.2026.135620">TempEst-NEXT paper</a>.</p>
-    <p>Note: forecasts are generally for smaller tributaries. If a forecast is at a confluence, the mainstem temperature likely differs. Note also that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
-    <p>The above map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information.</p>
+    <p>Note that these forecasts are from a generic, national model. It is typically effective everywhere (e.g., mountains, deserts, forests, cities), with typical errors around 2-3 C (4-5 F), but any given site may have large errors. Forecasts just downstream of a reservoir, hot spring, or wastewater discharge may be particularly unreliable.</p>
+    <p>The above map is interactive and can be panned and zoomed. Hovering over a point will display its information in the top right; clicking will produce a persistent pop-up with the same information. Clicking on the site ID in the pop-up will take you to a table with daily predictions for that site.</p>
     </div>
     </div>
     <div id="staticmaprow">
@@ -196,7 +196,7 @@
     };
     // method that we will use to update the control based on feature properties passed
     function mkDesc(props) {
-      return 'HUC-12 Watershed ID: ' + props.id + '<br />' +
+      return 'HUC-12 Watershed ID: <a href="/table.html/#' + props.id + '">' + props.id + '</a><br />' +
             'Weekly average: ' + Math.round(props.mean, 2) + ' degC (' + Math.round(props.mean * 1.8 + 32, 2) + ' degF)<br />' +
             'Minimum daily average: ' + Math.round(props.min, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />' +
             'Maximum daily average: ' + Math.round(props.max, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)';
