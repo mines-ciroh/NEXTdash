@@ -196,7 +196,7 @@
     };
     // method that we will use to update the control based on feature properties passed
     function mkDesc(props) {
-      return 'HUC-12 Watershed ID: <a href="/table.html/#' + props.id + '">' + props.id + '</a><br />' +
+      return 'HUC-12 Watershed ID: <a href="/table.html#' + props.id + '">' + props.id + '</a><br />' +
             'Weekly average: ' + Math.round(props.mean, 2) + ' degC (' + Math.round(props.mean * 1.8 + 32, 2) + ' degF)<br />' +
             'Minimum daily average: ' + Math.round(props.min, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)<br />' +
             'Maximum daily average: ' + Math.round(props.max, 2) + ' degC (' + Math.round(props.min * 1.8 + 32, 2) + ' degF)';
